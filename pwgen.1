@@ -1,0 +1,75 @@
+.TH "pwgen" "1" "24 December 2020" "pwgen" "Password Generator"
+
+.SH NAME
+.B pwgen
+- generator of passwords.
+
+
+.SH SYNOPSIS
+.SY pwgen
+.OP -l
+.OP -u
+.OP -d
+.OP -a
+.RB [ -n
+.IR LENGTH ]
+.YS
+.SY pwgen
+.OP --lower
+.OP --upper
+.OP --digit
+.OP --ascii
+.RB [ --length
+.IR LENGTH ]
+.YS
+
+
+.SH DESCRIPTION
+.B pwgen
+is a password generator for generation of secure random passwords composed
+of specified charsets.
+
+
+.SH OPTIONS
+.BR \-l ,
+.B \-\-lower
+.RS 4
+Use lowercase letters in the passwords.
+.RE
+
+.BR \-u ,
+.B \-\-upper
+.RS 4
+Use uppercase letters in the passwords.
+.RE
+
+.BR \-d ,
+.B \-\-digit
+.RS 4
+Use numbers in the passwords.
+.RE
+
+.BR \-a ,
+.B \-\-ascii
+.RS 4
+Use all printable
+.BR ascii (7)
+characters in the passwords.
+.RE
+
+.B \-n
+.IR LENGTH ,
+.B \-\-length
+.I LENGTH
+.RS 4
+Length of the password.
+.RE
+
+.SH LICENSE AND WARRANTY
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License version 2 as published by the
+Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
