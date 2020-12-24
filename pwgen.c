@@ -71,7 +71,7 @@ static int randomise(unsigned char *buf, unsigned int len)
 
 static int generate_password(unsigned int flags, unsigned int n)
 {
-	unsigned char buf[128], res[n];
+	unsigned char buf[128], res[n + 1];
 	int ret, i, pos = 0;
 
 	while (1) {
@@ -89,6 +89,7 @@ static int generate_password(unsigned int flags, unsigned int n)
 		}
 	}
 out:
+	res[n] = '\0';
 	printf("%s\n", res);
 	memset(res, '\0', n);
 	return 0;
@@ -107,23 +108,20 @@ int main(int argc, const char **argv)
 			if (strcmp(arg, "--length") == 0) {
 				arg = argv[++i];
 				n = strtoul(arg, NULL, 10);
-				continue;
 			} else if (strcmp(arg, "--lower") == 0) {
 				flags |= FLAG_LOWER;
-				continue;
 			} else if (strcmp(arg, "--upper") == 0) {
 				flags |= FLAG_UPPER;
-				continue;
 			} else if (strcmp(arg, "--digit") == 0) {
 				flags |= FLAG_DIGIT;
-				continue;
 			} else if (strcmp(arg, "--ascii") == 0) {
 				flags |= FLAG_ASCII;
-				continue;
+			} else {
+				goto badarg;
 			}
-		}
+			continue;
 
-		if (arg[0] == '-') {
+		} else if (arg[0] == '-') {
 			for (j = 1; arg[j]; j++) {
 				switch (arg[j]) {
 				case 'n':
@@ -148,7 +146,7 @@ int main(int argc, const char **argv)
 			}
 			continue;
 		}
-
+badarg:
 		fatal("unexpected parameter ‘%s’.", arg);
 	}
 
