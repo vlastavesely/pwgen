@@ -12,7 +12,7 @@ $(TARGET): pwgen.o
 	$(CC) -MMD -MP -c $< -o $@
 
 test: $(TARGET)
-	./$(TARGET) -n 32 --lower --upper
+	./$(TARGET) --lower --upper
 	./$(TARGET) -n 32 -lud
 	./$(TARGET) -n 32 -a
 
