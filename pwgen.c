@@ -71,7 +71,7 @@ static int randomise(unsigned char *buf, unsigned int len)
 
 static int generate_password(unsigned int flags, unsigned int n)
 {
-	unsigned char buf[10], res[n];
+	unsigned char buf[128], res[n];
 	int ret, i, pos = 0;
 
 	while (1) {
