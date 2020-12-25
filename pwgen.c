@@ -5,7 +5,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <getopt.h>
 #include <stdbool.h>
+
+#define PROGNAME "pwgen"
+#define VERSION "0.1"
 
 #define FLAG_LOWER 0x00000001
 #define FLAG_UPPER 0x00000002
@@ -13,6 +17,31 @@
 #define FLAG_ASCII 0x00000008
 
 #define PWGEN_DEFAULT_PASSLEN 20
+
+static char *usage_str =
+	"Usage: pwgen [OPTION]...\n"
+	"Generate a secure password.\n"
+	"\n"
+	"  -l, --lower            Use lowercase letters.\n"
+	"  -u, --upper            Use uppercase letters.\n"
+	"  -d, --digit            Use digits.\n"
+	"  -a, --ascii            Use all printable ASCII characters.\n"
+	"  -n, --length [LENGTH]  Length of the generated password.\n"
+	"  -v, --version          Print version number and exit.\n"
+	"  -h, --help             Show this message and exit.\n";
+
+static const char *short_opts = "hvludan:";
+
+static const struct option long_opts[] = {
+	{"help",      no_argument,       0, 'h'},
+	{"version",   no_argument,       0, 'v'},
+	{"lower",     no_argument,       0, 'l'},
+	{"upper",     no_argument,       0, 'u'},
+	{"digit",     no_argument,       0, 'd'},
+	{"ascii",     no_argument,       0, 'a'},
+	{"length",    required_argument, 0, 'n'},
+	{0, 0, 0, 0}
+};
 
 static void fatal(const char *fmt, ...)
 {
@@ -95,59 +124,56 @@ out:
 	return 0;
 }
 
+static void usage()
+{
+	puts(usage_str);
+	exit(0);
+}
+
+static void version()
+{
+	printf("%s %s\n", PROGNAME, VERSION);
+	exit(0);
+}
+
 int main(int argc, const char **argv)
 {
-	unsigned int i, j, flags = 0;
-	unsigned int n = PWGEN_DEFAULT_PASSLEN;
-	int ret;
+	unsigned int n = PWGEN_DEFAULT_PASSLEN, flags = 0;
+	int opt_index = 0, c = 0, ret;
 
-	for (i = 1; i < argc; i++) {
-		const char *arg = argv[i];
-
-		if (arg[0] == '-' && arg[1] == '-') {
-			if (strcmp(arg, "--length") == 0) {
-				arg = argv[++i];
-				n = strtoul(arg, NULL, 10);
-			} else if (strcmp(arg, "--lower") == 0) {
-				flags |= FLAG_LOWER;
-			} else if (strcmp(arg, "--upper") == 0) {
-				flags |= FLAG_UPPER;
-			} else if (strcmp(arg, "--digit") == 0) {
-				flags |= FLAG_DIGIT;
-			} else if (strcmp(arg, "--ascii") == 0) {
-				flags |= FLAG_ASCII;
-			} else {
-				goto badarg;
-			}
-			continue;
-
-		} else if (arg[0] == '-') {
-			for (j = 1; arg[j]; j++) {
-				switch (arg[j]) {
-				case 'n':
-					arg = argv[++i];
-					n = strtoul(arg, NULL, 10);
-					break;
-				case 'l':
-					flags |= FLAG_LOWER;
-					break;
-				case 'u':
-					flags |= FLAG_UPPER;
-					break;
-				case 'd':
-					flags |= FLAG_DIGIT;
-					break;
-				case 'a':
-					flags |= FLAG_ASCII;
-					break;
-				default:
-					fatal("unexpected parameter ‘%c’.", arg[j]);
-				}
-			}
-			continue;
+	opterr = 0; /* disable the auto error message */
+	while (c != -1) {
+		c = getopt_long(argc, (char *const *) argv, short_opts,
+				long_opts, &opt_index);
+		switch (c) {
+		case 'l':
+			flags |= FLAG_LOWER;
+			break;
+		case 'u':
+			flags |= FLAG_UPPER;
+			break;
+		case 'd':
+			flags |= FLAG_DIGIT;
+			break;
+		case 'a':
+			flags |= FLAG_ASCII;
+			break;
+		case 'n':
+			n = strtoul(optarg, NULL, 10);
+			break;
+		case 'v':
+			version();
+			break;
+		case 'h':
+			usage();
+			break;
+		case '?':
+			fatal("unrecognized option '-%s'.", optopt ?
+				(char *) &(optopt) : argv[optind - 1] + 1);
+			return -1;
+		default:
+			break;
 		}
-badarg:
-		fatal("unexpected parameter ‘%s’.", arg);
 	}
 
 	ret = generate_password(flags, n);
