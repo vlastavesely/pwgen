@@ -15,6 +15,7 @@ test: $(TARGET)
 	./$(TARGET) --lower --upper
 	./$(TARGET) -n 32 -lud
 	./$(TARGET) -n 32 -a
+	./$(TARGET) -n 32 -c 01
 
 clean:
 	rm -f $(TARGET) *.o *.d

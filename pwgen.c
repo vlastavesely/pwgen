@@ -18,20 +18,21 @@
 
 #define PWGEN_DEFAULT_PASSLEN 20
 
+static const char *user_charset = NULL;
 static char *usage_str =
 	"Usage: pwgen [OPTION]...\n"
 	"Generate a secure password.\n"
 	"\n"
-	"  -l, --lower            Use lowercase letters.\n"
-	"  -u, --upper            Use uppercase letters.\n"
-	"  -d, --digit            Use digits.\n"
-	"  -a, --ascii            Use all printable ASCII characters.\n"
-	"  -n, --length [LENGTH]  Length of the generated password.\n"
-	"  -v, --version          Print version number and exit.\n"
-	"  -h, --help             Show this message and exit.\n";
+	"  -l, --lower              Use lowercase letters.\n"
+	"  -u, --upper              Use uppercase letters.\n"
+	"  -d, --digit              Use digits.\n"
+	"  -a, --ascii              Use all printable ASCII characters.\n"
+	"  -n, --length [LENGTH]    Length of the generated password.\n"
+	"  -c, --charset [CHARSET]  User specified char set.\n"
+	"  -v, --version            Print version number and exit.\n"
+	"  -h, --help               Show this message and exit.\n";
 
-static const char *short_opts = "hvludan:";
-
+static const char *short_opts = "hvludan:c:";
 static const struct option long_opts[] = {
 	{"help",      no_argument,       0, 'h'},
 	{"version",   no_argument,       0, 'v'},
@@ -40,6 +41,7 @@ static const struct option long_opts[] = {
 	{"digit",     no_argument,       0, 'd'},
 	{"ascii",     no_argument,       0, 'a'},
 	{"length",    required_argument, 0, 'n'},
+	{"charset",   required_argument, 0, 'c'},
 	{0, 0, 0, 0}
 };
 
@@ -78,6 +80,16 @@ static inline bool is_upper(unsigned int c)
 
 static inline bool is_accepted(unsigned int c, unsigned int flags)
 {
+	unsigned int i;
+
+	if (user_charset) {
+		for (i = 0; i < strlen(user_charset); i++) {
+			if (user_charset[i] == c) {
+				return true;
+			}
+		}
+	}
+
 	return ((flags & FLAG_LOWER) && is_lower(c)) ||
 	       ((flags & FLAG_UPPER) && is_upper(c)) ||
 	       ((flags & FLAG_DIGIT) && is_digit(c)) ||
@@ -160,6 +172,9 @@ int main(int argc, const char **argv)
 			break;
 		case 'n':
 			n = strtoul(optarg, NULL, 10);
+			break;
+		case 'c':
+			user_charset = optarg;
 			break;
 		case 'v':
 			version();
