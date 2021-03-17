@@ -28,11 +28,12 @@ static char *usage_str =
 	"  -d, --digit              Use digits.\n"
 	"  -a, --ascii              Use all printable ASCII characters.\n"
 	"  -n, --length [LENGTH]    Length of the generated password.\n"
+	"  -r, --repeat [COUNT]     Generate multiple passwords.\n"
 	"  -c, --charset [CHARSET]  User specified char set.\n"
 	"  -v, --version            Print version number and exit.\n"
 	"  -h, --help               Show this message and exit.\n";
 
-static const char *short_opts = "hvludan:c:";
+static const char *short_opts = "hvludan:r:c:";
 static const struct option long_opts[] = {
 	{"help",      no_argument,       0, 'h'},
 	{"version",   no_argument,       0, 'v'},
@@ -41,13 +42,14 @@ static const struct option long_opts[] = {
 	{"digit",     no_argument,       0, 'd'},
 	{"ascii",     no_argument,       0, 'a'},
 	{"length",    required_argument, 0, 'n'},
+	{"repeat",    required_argument, 0, 'r'},
 	{"charset",   required_argument, 0, 'c'},
 	{0, 0, 0, 0}
 };
 
 static void fatal(const char *fmt, ...)
 {
-	unsigned char msg[1024];
+	char msg[1024];
 	va_list params;
 
 	va_start(params, fmt);
@@ -103,6 +105,7 @@ static int randomise(unsigned char *buf, unsigned int len)
 	fd = open("/dev/urandom", O_RDONLY);
 	if (fd == -1)
 		return -errno;
+
 	n = read(fd, buf, len);
 	ret = (n != len) ? -errno : 0;
 	close(fd);
@@ -133,6 +136,7 @@ out:
 	res[n] = '\0';
 	printf("%s\n", res);
 	memset(res, '\0', n);
+
 	return 0;
 }
 
@@ -151,7 +155,7 @@ static void version()
 int main(int argc, const char **argv)
 {
 	unsigned int n = PWGEN_DEFAULT_PASSLEN, flags = 0;
-	int opt_index = 0, c = 0, ret;
+	int opt_index = 0, c = 0, r = 1, ret;
 
 	opterr = 0; /* disable the auto error message */
 	while (c != -1) {
@@ -173,6 +177,9 @@ int main(int argc, const char **argv)
 		case 'n':
 			n = strtoul(optarg, NULL, 10);
 			break;
+		case 'r':
+			r = strtoul(optarg, NULL, 10);
+			break;
 		case 'c':
 			user_charset = optarg;
 			break;
@@ -183,7 +190,7 @@ int main(int argc, const char **argv)
 			usage();
 			break;
 		case '?':
-			fatal("unrecognized option '-%s'.", optopt ?
+			fatal("unrecognised option '-%s'.", optopt ?
 				(char *) &(optopt) : argv[optind - 1] + 1);
 			return -1;
 		default:
@@ -191,7 +198,11 @@ int main(int argc, const char **argv)
 		}
 	}
 
-	ret = generate_password(flags, n);
+	while (r--) {
+		ret = generate_password(flags, n);
+		if (ret != 0)
+			return ret;
+	}
 
 	return ret;
 }
