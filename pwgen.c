@@ -16,7 +16,7 @@
 #define FLAG_DIGIT 0x00000004
 #define FLAG_ASCII 0x00000008
 
-#define PWGEN_DEFAULT_PASSLEN 20
+#define DEFAULT_PASSLEN 20
 
 static const char *user_charset = NULL;
 static char *usage_str =
@@ -140,21 +140,19 @@ out:
 	return 0;
 }
 
-static void usage()
+static void print_usage()
 {
 	puts(usage_str);
-	exit(0);
 }
 
-static void version()
+static void print_version()
 {
 	printf("%s %s\n", PROGNAME, VERSION);
-	exit(0);
 }
 
 int main(int argc, const char **argv)
 {
-	unsigned int n = PWGEN_DEFAULT_PASSLEN, flags = 0;
+	unsigned int n = DEFAULT_PASSLEN, flags = 0;
 	int opt_index = 0, c = 0, r = 1, ret;
 
 	opterr = 0; /* disable the auto error message */
@@ -184,10 +182,12 @@ int main(int argc, const char **argv)
 			user_charset = optarg;
 			break;
 		case 'v':
-			version();
+			print_version();
+			exit(0);
 			break;
 		case 'h':
-			usage();
+			print_usage();
+			exit(0);
 			break;
 		case '?':
 			fatal("unrecognised option '-%s'.", optopt ?
@@ -196,6 +196,11 @@ int main(int argc, const char **argv)
 		default:
 			break;
 		}
+	}
+
+	if (flags == 0 && user_charset == NULL) {
+		print_usage();
+		exit(1);
 	}
 
 	while (r--) {
