@@ -1,0 +1,21 @@
+Password Generator
+~~~~~~~~~~~~~~~~~~
+This program is a simple utility to generate random strings composed
+of characters from different character sets. You can freely combine multiple
+character sets or specify your own. There are four default character sets built
+in: uppercase characters, lowercase characters, numbers, or all printable ASCII
+characters. As the source of entropy, the Linux /dev/urandom file is used so
+the strings should be reasonably random.
+
+
+Licensing Notice
+----------------
+This software is released under the terms of the GPL license version 2 as
+published by the Free Software Foundation. You can freely redistribute and/or
+modify the software under the terms of the license.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+For more information on details of the license, see the file COPYING.
