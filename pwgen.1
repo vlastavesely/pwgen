@@ -1,8 +1,8 @@
-.TH "pwgen" "1" "24 December 2020" "pwgen" "Password Generator"
+.TH "pwgen" "1" "04 April 2021" "pwgen" "Password Generator"
 
 .SH NAME
 .B pwgen
-- generator of passwords.
+- generator of random passwords
 
 
 .SH SYNOPSIS
@@ -13,7 +13,9 @@
 .OP -a
 .RB [ -n
 .IR LENGTH ]
-.YS
+.RB [ -r
+.IR COUNT ]
+.br
 .SY pwgen
 .OP --lower
 .OP --upper
@@ -21,13 +23,21 @@
 .OP --ascii
 .RB [ --length
 .IR LENGTH ]
+.RB [ --repeat
+.IR COUNT ]
 .YS
 
 
 .SH DESCRIPTION
 .B pwgen
-is a password generator for generation of secure random passwords composed
-of specified charsets.
+is a simple utility to generate random strings composed of characters from
+different character sets. You can freely combine multiple character sets or
+specify your own. There are four default character sets built in:
+uppercase characters, lowercase characters, numbers, or all printable
+.BR ASCII (7)
+characters. As the source of entropy, the Linux
+.I /dev/urandom
+file is used so the strings should be reasonably random.
 
 
 .SH OPTIONS
@@ -65,6 +75,14 @@ characters in the passwords.
 Length of the password.
 .RE
 
+.B \-r
+.IR COUNT ,
+.B \-\-repeat
+.I COUNT
+.RS 4
+Generate multiple passwords.
+.RE
+
 .B \-c
 .IR CHARSET ,
 .B \-\-charset
@@ -86,7 +104,22 @@ Show usage information and exit.
 .RE
 
 
+.SH SEE ALSO
+.BR random (7),
+.BR ascii (7).
+
+
+.SH REPORTING BUGS
+If you encounter a bug, you should make sure that you are using the latest
+version of the software. If you are and the bug is still present, you can
+report it on the GitLab issues tracker:
+.IR https://gitlab.com/vlastavesely/pwgen/issues .
+
+
 .SH LICENSE AND WARRANTY
+Copyright © 2021  Vlasta Vesely
+.RI < vlastavesely@protonmail.ch >
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License version 2 as published by the
 Free Software Foundation.
