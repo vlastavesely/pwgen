@@ -9,7 +9,7 @@
 #include <stdbool.h>
 
 #define PROGNAME "pwgen"
-#define VERSION "0.1"
+#define VERSION "1.0"
 
 #define FLAG_LOWER 0x00000001
 #define FLAG_UPPER 0x00000002
@@ -29,7 +29,7 @@ static char *usage_str =
 	"  -a, --ascii              Use all printable ASCII characters.\n"
 	"  -n, --length [LENGTH]    Length of the generated password.\n"
 	"  -r, --repeat [COUNT]     Generate multiple passwords.\n"
-	"  -c, --charset [CHARSET]  User specified char set.\n"
+	"  -c, --charset [CHARSET]  User specified character set.\n"
 	"  -v, --version            Print version number and exit.\n"
 	"  -h, --help               Show this message and exit.\n";
 
